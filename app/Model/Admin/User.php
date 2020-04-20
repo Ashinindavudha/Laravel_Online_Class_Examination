@@ -7,11 +7,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Hash;
 use Mail;
-class User extends Authenticatable
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+class User extends Authenticatable implements HasMedia
 {
-    use SoftDeletes, Notifiable;
+    use SoftDeletes, Notifiable, InteractsWithMedia;
 
-    protected $fillable = ['name', 'email', 'password', 'remember_token', 'role_id'];
+    protected $fillable = ['name', 'email', 'password', 'remember_token', 'role_id', 'academic_year_id', 'course_semester_id', 'student_register_id', 'student_roll_id'];
 
     public static function boot()
     {
@@ -45,7 +48,22 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class, 'role_id')->withTrashed();
     }
-
+    public function semester()
+    {
+        return $this->belongsTo(CourseSemester::class, 'course_semester_id');
+    }
+    public function register()
+    {
+        return $this->belongsTo(StudentRegister::class, 'student_register_id');
+    }
+    public function roll()
+    {
+        return $this->belongsTo(StudentRegister::class, 'student_roll_id');
+    }
+    public function year()
+    {
+        return $this->belongsTo(AcademicYear::class, 'academic_year_id');
+    }
     public function isAdmin()
     {
         foreach ($this->role()->get() as $role) {
@@ -55,5 +73,23 @@ class User extends Authenticatable
         }
 
         return false;
+    }
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+        ->width(368)
+        ->height(232);
+    }
+    public function getPhotoAttribute()
+    {
+        $file = $this->getMedia('photo')->last();
+
+        if ($file) {
+            $file->url       = $file->getUrl();
+            $file->thumbnail = $file->getUrl('thumb');
+        }
+
+        return $file;
     }
 }

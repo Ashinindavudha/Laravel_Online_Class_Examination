@@ -47,5 +47,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
     //Academic Year Route
     Route::resource('academicyears', 'AcademicYearController');
+    Route::post('users/media', 'UserController@storeMedia')->name('users.storeMedia');
+    Route::resource('users', 'UserController');
 
 });

@@ -27,6 +27,11 @@ class CreateUsersTable extends Migration
             // $table->integer('role_id')->unsigned()->nullable();
             // $table->foreign('role_id', 'fk_253_role_role_id_user')->references('id')->on('roles');
             $table->unsignedBigInteger('role_id')->nullable();
+            $table->unsignedBigInteger('academic_year_id')->nullable();
+            $table->unsignedBigInteger('course_semester_id')->nullable();
+            $table->unsignedBigInteger('student_register_id')->nullable();
+            $table->unsignedBigInteger('student_roll_id')->nullable();
+
             //$table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
 
             $table->string('remember_token')->nullable();

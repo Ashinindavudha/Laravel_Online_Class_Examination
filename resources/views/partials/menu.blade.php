@@ -64,6 +64,14 @@
                                 <span>{{ trans('cruds.user_action.title') }}</span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.users.index') }}" class="nav-link">
+                                <i class="fa-fw fas fa-user">
+
+                                </i>
+                                <span>{{ trans('cruds.user.title') }}</span>
+                            </a>
+                        </li>
 
 
                         <li class="nav-item">

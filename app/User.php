@@ -7,9 +7,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Hash;
 use Mail;
-class User extends Authenticatable
+
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+
+class User extends Authenticatable implements HasMedia
 {
-    use SoftDeletes, Notifiable;
+    use SoftDeletes, Notifiable, InteractsWithMedia;
 
     protected $fillable = ['name', 'email', 'password', 'remember_token', 'role_id'];
 
@@ -45,6 +50,26 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class, 'role_id')->withTrashed();
     }
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+              ->width(368)
+              ->height(232);
+    }
+    public function getPhotoAttribute()
+    {
+        $file = $this->getMedia('photo')->last();
+
+        if ($file) {
+            $file->url       = $file->getUrl();
+            $file->thumbnail = $file->getUrl('thumb');
+        }
+
+        return $file;
+    }
+
+    
 
     public function isAdmin()
     {
